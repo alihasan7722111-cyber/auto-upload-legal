@@ -1,14 +1,11 @@
 {
-  "name": "tiktok-auto-upload-demo",
+  "name": "auto-upload-legal",
   "version": "1.0.0",
-  "scripts": {
-    "start": "vercel dev"
+  "type": "module",
+  "engines": {
+    "node": "22.x"
   },
   "dependencies": {
-    "node-fetch": "^3.4.1",
-    "form-data": "^4.0.0"
-  },
-  "engines": {
-    "node": "18.x"
+    "node-fetch": "^3.3.2"
   }
 }
