@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"/><title>Auto Upload — Upload</title></head>
+<body>
+  <h1>Upload a video (Demo)</h1>
+  <p id="status">Not ready</p>
+  <input type="file" id="file" accept="video/*" />
+  <br/>
+  <input type="text" id="caption" placeholder="Caption (optional)" style="width:400px"/>
+  <br/>
+  <button id="uploadBtn">Upload to TikTok (upload -> publish)</button>
+
+  <script>
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+      const fileEl = document.getElementById('file');
+      if (!fileEl.files.length) { alert('Select a file'); return; }
+      const file = fileEl.files[0];
+      const caption = document.getElementById('caption').value || '';
+
+      const form = new FormData();
+      form.append('video', file);
+      form.append('caption', caption);
+
+      document.getElementById('status').innerText = 'Uploading video (step 1)...';
+
+      const res = await fetch('/api/upload', { method: 'POST', body: form });
+      const data = await res.json();
+      if (!res.ok) {
+        document.getElementById('status').innerText = 'Upload failed: ' + (data?.error || JSON.stringify(data));
+        return;
+      }
+      document.getElementById('status').innerText = 'Upload init OK. Publishing...';
+
+      const pubRes = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ upload_id: data.upload_id, caption })
+      });
+      const pubData = await pubRes.json();
+      if (!pubRes.ok) {
+        document.getElementById('status').innerText = 'Publish failed: ' + (pubData?.error || JSON.stringify(pubData));
+        return;
+      }
+      document.getElementById('status').innerText = 'Published! Response: ' + JSON.stringify(pubData);
+    });
+  </script>
+</body>
+</html>
